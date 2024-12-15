@@ -4,30 +4,38 @@ import com.example.student_rest.model.Student;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StudentFileReader {
-    public List<Student> readStudentsFromFile() throws IOException {
+
+    public static List<Student> readStudents(String filePath) {
         List<Student> students = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/student.txt")))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
             String line;
-            br.readLine(); // Skip header
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                if (values.length != 5) {
-                    throw new IllegalArgumentException("Invalid data format");
+            boolean isFirstLine = true; // Skip header
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
                 }
-                Student student = new Student();
-                student.setId(Long.parseLong(values[0]));
-                student.setFirstName(values[1]);
-                student.setGpa(Double.parseDouble(values[2]));
-                student.setEmail(values[3]);
-                student.setGender(values[4]);
-                students.add(student);
+                String[] parts = line.split(",");
+                if (parts.length == 5) {
+                    Long id = Long.parseLong(parts[0].trim());
+                    String name = parts[1].trim();
+                    double gpa = Double.parseDouble(parts[2].trim());
+                    String email = parts[3].trim();
+                    String gender = parts[4].trim();
+
+                    students.add(new Student(id, name, gpa, email, gender));
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return students;
     }
 }
+

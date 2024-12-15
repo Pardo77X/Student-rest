@@ -1,16 +1,32 @@
 package com.example.student_rest.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class Student {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
+
+    private String name;
     private double gpa;
     private String email;
     private String gender;
+
+    public Student() {
+    }
+
+    public Student(Long id, String name, double gpa, String email, String gender) {
+        this.id = id;
+        this.name = name;
+        this.gpa = gpa;
+        this.email = email;
+        this.gender = gender;
+    }
 
     public Long getId() {
         return id;
@@ -20,12 +36,12 @@ public class Student {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getGpa() {

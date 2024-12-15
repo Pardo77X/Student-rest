@@ -1,29 +1,34 @@
 package com.example.student_rest.service;
 
 import com.example.student_rest.model.Student;
-import com.example.student_rest.repository.StudentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import com.example.student_rest.util.StudentFileReader;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
-    @Autowired
-    private StudentRepository studentRepository;
+    private final List<Student> students;
+
+    public StudentService() {
+        this.students = StudentFileReader.readStudents("src/main/resources/student.txt");
+    }
+
+    public List<Student> getAllStudents() {
+        return students;
+    }
 
     public List<Student> searchByName(String name) {
-        return studentRepository.findByFirstNameIgnoreCase(name);
+        return students.stream()
+                .filter(student -> student.getName().equalsIgnoreCase(name))
+                .collect(Collectors.toList());
     }
 
-    public List<Student> searchByGpaAndGender(double minGpa, double maxGpa, String gender) {
-        return studentRepository.findByGpaBetweenAndGender(minGpa, maxGpa, gender);
-    }
-
-    @Cacheable("averageGpa")
-    public double calculateAverageGpaByGender(String gender) {
-        List<Student> students = studentRepository.findByGender(gender);
-        return students.stream().mapToDouble(Student::getGpa).average().orElse(0.0);
+    public List<Student> findByGpaAndGender(double minGpa, double maxGpa, String gender) {
+        return students.stream()
+                .filter(student -> student.getGpa() >= minGpa && student.getGpa() <= maxGpa)
+                .filter(student -> student.getGender().equalsIgnoreCase(gender))
+                .collect(Collectors.toList());
     }
 }

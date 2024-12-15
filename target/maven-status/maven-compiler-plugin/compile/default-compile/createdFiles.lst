@@ -1,0 +1,6 @@
+com\example\student_rest\StudentRestApplication.class
+com\example\student_rest\service\StudentService.class
+com\example\student_rest\model\Student.class
+com\example\student_rest\controller\StudentController.class
+com\example\student_rest\repository\StudentRepository.class
+com\example\student_rest\util\StudentFileReader.class
